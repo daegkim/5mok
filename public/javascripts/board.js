@@ -2,13 +2,8 @@ var player = 0
 var turn = 1
 
 $(() => {
-    var socket = io('/game_nsp')
     var x = -1
     var y = -1
-
-    socket.on('connect', () => {
-        console.log('connect', socket.id)
-    })
 
     socket.on('init', (data) => {
         console.log('init')
