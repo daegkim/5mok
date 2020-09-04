@@ -19,3 +19,7 @@ table {
 #div_board{
   display: none;
 }
+
+#btnLeaveRoom{
+  display: none;
+}

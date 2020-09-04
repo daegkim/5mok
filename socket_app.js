@@ -28,6 +28,7 @@ io.on('connect', (socket) => {
         room_info.push(new_room)
 
         socket.join('room' + new_room_id)
+        console.log(new_room)
 
         io.emit('create_room', new_room)
     })
@@ -57,41 +58,68 @@ io.on('connect', (socket) => {
     })
 
     socket.on('disconnect', () => {
-        let room_id = -1
-        let isRoomDeleted = false
-        let flag = false
+        leave_room(socket)
+    })
 
-        for(var i in room_info){
-            for(var j in room_info[i].members){
-                if(room_info[i].members[j] === socket.id){
-                    //delete the member from the room
-                    room_id = room_info[i].room_id
-                    room_info[i].members.splice(j, 1)
-                    //delete the room
-                    if(room_info[i].members.length === 0){
-                        room_info.splice(i, 1)
-                        isRoomDeleted = true
-                    }
-
-                    flag = true
-                    break
-                }
-            }
-            if(flag){
-                break
-            }
-        }
-
-        if(room_id > 0){
-            io.emit('leave_room', {
-                room_id: room_id,
-                socket_id: socket.id,
-                isRoomDeleted: isRoomDeleted
-            })
-        }
+    socket.on('leave_room', () => {
+        let room_id = 'room' + getRoomIDBySocketID(socket.id)
+        socket.leave(room_id + room_id)
+        leave_room(socket)
     })
 
     io.to(socket.id).emit('init_room_info', room_info)
 })
+
+const leave_room = (socket) => {
+    let room_id = -1
+    let isRoomDeleted = false
+    let flag = false
+
+    for(var i in room_info){
+        for(var j in room_info[i].members){
+            if(room_info[i].members[j] === socket.id){
+                //delete the member from the room
+                room_id = room_info[i].room_id
+                room_info[i].members.splice(j, 1)
+                //delete the room
+                if(room_info[i].members.length === 0){
+                    room_info.splice(i, 1)
+                    isRoomDeleted = true
+                }
+
+                flag = true
+                break
+            }
+        }
+        if(flag){
+            break
+        }
+    }
+
+    if(room_id > 0){
+        io.emit('leave_room', {
+            room_id: room_id,
+            socket_id: socket.id,
+            isRoomDeleted: isRoomDeleted
+        })
+    }
+}
+
+const getRoomIDBySocketID = (socket_id) => {
+    let result = ''
+    for(var i in room_info){
+        let flag = false
+        for(var j in room_info[i].members){
+            if(room_info[i].members[j] === socket_id){
+                result = room_info[i].room_id
+                break
+            }
+        }
+        if(flag){
+            break
+        }
+    }
+    return result
+}
 
 module.exports = io;

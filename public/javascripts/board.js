@@ -5,33 +5,6 @@ $(() => {
     var x = -1
     var y = -1
 
-    socket.on('init', (data) => {
-        console.log('init')
-        if(data.socket_id === socket.id){
-            player = data.player
-        }
-    })
-
-    socket.on('disconnect', (reason) => {
-        console.log(reason)
-    })
-
-    socket.on('result', (result) => {
-        var id = result.x * 18 + result.y
-
-        if(result.isCheckmate === 'checkmate'){
-            alert(result.player + '번 플레이어 승리')
-        }
-
-        if(result.player === 1){
-            $('#td' + id).css('background-color', 'black')
-        }
-        else{
-            $('#td' + id).css('background-color', 'white')
-        }
-
-        turn = result.turn
-    })
 
     $('td').click((e) => {
         //이미 바둑알이 있는 경우 둘 수 없음
