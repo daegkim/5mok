@@ -4,6 +4,7 @@ var isInRoom = false
 var room_id = -1
 var player = -1
 var turn = 1
+var canStart = false
 
 const msg_join_fail = 'You\'re already in the room'
 const msg_welcome = 'Welcome to room'
@@ -23,29 +24,6 @@ window.onload = () => {
 
     $('#btnLeaveRoom').click(() => {
         socket.emit('leave_room')
-    })
-
-    $('td').click((e) => {
-        console.log(e)
-        //이미 바둑알이 있는 경우 둘 수 없음
-        if($('#'+e.target.id).css('background-color') !== 'rgba(0, 0, 0, 0)'){
-            alert('해당 위치에 이미 말이 있습니다.')
-            return
-        }
-
-        if(player !== turn){
-            alert('당신 차례가 아닙니다.')
-            return
-        }
-
-        x = e.target.parentElement.rowIndex
-        y = e.target.cellIndex
-
-        socket.emit('data', {
-            x: x,
-            y: y,
-            player: player
-        })
     })
 }
 
@@ -71,10 +49,11 @@ socket.on('join_room', (data) => {
         document.getElementById(data.room_id).innerText = 'this room is full'
 
         //same room
+        console.log(data, room_id)
         if(data.room_id === room_id){
+            $('td').click(tb_click)
             //this room member
             if(data.socket_id === socket.id){
-                console.log(socket.id, data.socket_id)
                 document.getElementById('div_board').style.display = 'block'
                 document.getElementById('divRoomList').style.display = 'none'
                 document.getElementById('btnLeaveRoom').style.display = 'block'
@@ -83,6 +62,7 @@ socket.on('join_room', (data) => {
             }     
             //another room member
             else{
+                player = 1
                 alert(socket.id + ' comes')
             }
         }
@@ -96,8 +76,6 @@ socket.on('join_room', (data) => {
 })
 
 socket.on('leave_room', (data) => {
-    console.log(data)
-
     if(data.isRoomDeleted){
         deleteRoomButton(data.room_id)
     }
@@ -106,6 +84,8 @@ socket.on('leave_room', (data) => {
     }
 
     if(room_id === data.room_id){
+        $('td').off('click', tb_click)
+        init_board()
         if(data.socket_id === socket.id){
             room_id = -1
             player = -1
@@ -114,6 +94,9 @@ socket.on('leave_room', (data) => {
             document.getElementById('div_board').style.display = 'none'
         }
         else{
+            if(!data.isRoomDeleted){
+                socket.emit('end_game', data.room_id)
+            }
             alert(data.socket_id + msg_leave)
         }
     }
@@ -123,6 +106,37 @@ socket.on('init_room_info', (data) => {
     for(let i in data){
         let btnNewRoom = createRoomButton(data[i].room_id, data[i].members.length)
         document.getElementById('divRoomList').appendChild(btnNewRoom)
+    }
+})
+
+socket.on('putStoneOnMap', (data) => {
+    //1. 체크메이트인 경우
+    //1.1. 이긴 사람 화면 : 당신이 이겼습니다.
+    //1.2. 진 사람 화면 : 이긴사람ID가 이겼습니다. 
+    //1.3. 화면 초기화
+    //1.4. 게임 초기화
+    //2. 체크메이트 아닌 경우
+    //2.1. 말을 둔 사람과 상대편 모두 해당 위치에 말 표시
+    //3. undefined라면
+    //3.1. 둔 사람 화면만 : 해당 위치에 이미 있음
+    if(data.result === undefined && data.socket_id === socket.id){
+        alert('해당 위치에 이미 말이 있습니다')
+        return
+    }
+
+    turn = data.turn
+    let color = data.player === 1 ? 'black' : 'white'
+    $('#td'+data.pos).css('background-color', color)
+
+    if(data.result){
+        init_board()
+        if(data.player === player){
+            socket.emit('end_game', room_id)
+            alert('당신이 이김')
+        }
+        else{
+            alert('당신이 짐')
+        }
     }
 })
 
@@ -150,4 +164,32 @@ function createRoomButton(_room_id, _member_num){
 function deleteRoomButton(_room_id){
     let btnSelected = document.getElementById(_room_id).parentElement
     document.getElementById('divRoomList').removeChild(btnSelected)
+}
+
+function tb_click(e){
+    //이미 바둑알이 있는 경우 둘 수 없음
+    if($('#'+e.target.id).css('background-color') !== 'rgba(0, 0, 0, 0)'){
+        alert('해당 위치에 이미 말이 있습니다.')
+        return
+    }
+
+    if(player !== turn){
+        alert('당신 차례가 아닙니다.')
+        return
+    }
+
+    x = e.target.parentElement.rowIndex
+    y = e.target.cellIndex
+
+    socket.emit('putStoneOnMap', {
+        x: x,
+        y: y,
+        player: player,
+        socket_id: socket.id
+    })
+}
+
+function init_board(){
+    $('td').css('background-color', 'rgba(0, 0, 0, 0)')
+    turn = 1
 }

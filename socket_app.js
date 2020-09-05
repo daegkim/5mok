@@ -1,11 +1,12 @@
 var io = require('socket.io')();
+var game = require('./game/algorithm');
 
 var room_info = []
 /*
 {
     room_id: 1,
     members: []
-    game_algo: 
+    game: 
 }
 */
 
@@ -23,12 +24,12 @@ io.on('connect', (socket) => {
         let new_room = {
             room_id: new_room_id,
             members: [socket.id],
+            game: new game()
         }
 
         room_info.push(new_room)
 
         socket.join('room' + new_room_id)
-        console.log(new_room)
 
         io.emit('create_room', new_room)
     })
@@ -67,6 +68,26 @@ io.on('connect', (socket) => {
         leave_room(socket)
     })
 
+    socket.on('putStoneOnMap', (data) => {
+        let room_id = getRoomIDBySocketID(socket.id)
+        let room_game = getGameByRoomId(room_id)
+
+        let result = room_game.putStoneOnMap(data.x, data.y, data.player)
+        let send_data = {
+            result: result,
+            pos: parseInt(data.x) * 18 + parseInt(data.y),
+            player: data.player,
+            socket_id: socket.id,
+            turn: data.player === 1 ? 2 : 1
+        }
+
+        io.to('room' + room_id).emit('putStoneOnMap', send_data)
+    })
+
+    socket.on('end_game', (data) => {
+        getGameByRoomId(parseInt(data)).initMap()
+    })
+
     io.to(socket.id).emit('init_room_info', room_info)
 })
 
@@ -86,6 +107,9 @@ const leave_room = (socket) => {
                     room_info.splice(i, 1)
                     isRoomDeleted = true
                 }
+                else{
+                    room_info[i].game.initMap()
+                }
 
                 flag = true
                 break
@@ -95,6 +119,8 @@ const leave_room = (socket) => {
             break
         }
     }
+
+
 
     if(room_id > 0){
         io.emit('leave_room', {
@@ -114,6 +140,21 @@ const getRoomIDBySocketID = (socket_id) => {
                 result = room_info[i].room_id
                 break
             }
+        }
+        if(flag){
+            break
+        }
+    }
+    return result
+}
+
+const getGameByRoomId = (_room_id) => {
+    let result = null
+    for(let i in room_info){
+        let flag = false
+        if(room_info[i].room_id === _room_id){
+            result = room_info[i].game
+            break
         }
         if(flag){
             break

@@ -86,7 +86,7 @@ class algorithm {
         if(this.map[_x][_y] != 0){
             console.log(_x, _y)
             console.log('해당 위치에 이미 말이 있습니다.')
-            return false
+            return undefined
         }
 
         this.map[_x][_y] = _player
@@ -113,4 +113,4 @@ class algorithm {
     }
 }
 
-module.exports = new algorithm()
+module.exports = algorithm
