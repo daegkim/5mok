@@ -1,4 +1,6 @@
-var io = require('socket.io')();
+var io = require('socket.io')({
+    transports: ['websocket']
+});
 var game = require('./game/algorithm');
 
 var room_info = []
