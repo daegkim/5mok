@@ -23,3 +23,26 @@ table {
 #btnLeaveRoom{
   display: none;
 }
+
+.stoneBlink {
+  animation: blink-animation 0.5s steps(5, start) infinite alternate;
+  -webkit-animation: blink-animation 0.5s steps(5, start) infinite alternate;
+}
+
+@keyframes blink-animation {
+  from{
+    visibility: visible;
+  }
+  to{
+    visibility: hidden;
+  }
+}
+
+@-webkit-keyframes blink-animation {
+  from{
+    visibility: visible;
+  }
+  to{
+    visibility: hidden;
+  }
+}

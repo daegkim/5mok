@@ -1,10 +1,13 @@
-var socket = io();
+var socket = io({
+    transport: ['websocket']
+});
 
 var isInRoom = false
 var room_id = -1
 var player = -1
 var turn = 1
 var canStart = false
+var oppentStone = ''
 
 const msg_join_fail = 'You\'re already in the room'
 const msg_welcome = 'Welcome to room'
@@ -128,6 +131,12 @@ socket.on('putStoneOnMap', (data) => {
     let color = data.player === 1 ? 'black' : 'white'
     $('#td'+data.pos).css('background-color', color)
 
+    //상대가 둔 돌은 깜빡거림
+    if(data.player !== player){
+        oppentStone = '#td'+data.pos
+        $('#td'+data.pos).addClass('stoneBlink')
+    }
+
     if(data.result){
         init_board()
         if(data.player === player){
@@ -180,6 +189,8 @@ function tb_click(e){
 
     x = e.target.parentElement.rowIndex
     y = e.target.cellIndex
+
+    $(oppentStone).removeClass('stoneBlink')
 
     socket.emit('putStoneOnMap', {
         x: x,
