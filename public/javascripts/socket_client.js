@@ -37,7 +37,7 @@ socket.on('connect', () => {
 socket.on('create_room', (data) => {
     if(data.members[0] === socket.id){
         room_id = data.room_id
-        document.getElementById('btnLeaveRoom').style.display = 'block'
+        document.getElementById('btnLeaveRoom').style.display = 'inline-block'
         document.getElementById('divRoomList').style.display = 'none'
         document.getElementById('div_board').style.display = 'block'
         player = 1

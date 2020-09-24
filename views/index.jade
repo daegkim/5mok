@@ -1,16 +1,18 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
-  button#btnCreateRoom Create Room
-  button#btnLeaveRoom Leave Room
-  div#divRoomList
+  div.main_div
+    h1= title
+    p Welcome to #{title}
+    div.button_div
+      button#btnCreateRoom Create Room
+      button#btnLeaveRoom Leave Room
+    div#divRoomList
 
-  div#div_board
-    table
-      tbody
-        -for(var i=0; i<18; i++)
-            tr
-              -for(var j=0; j<18; j++)
-                  td(id = "td" + (i*18 + j))
+    div#div_board
+      table
+        tbody
+          -for(var i=0; i<18; i++)
+              tr
+                -for(var j=0; j<18; j++)
+                    td(id = "td" + (i*18 + j))

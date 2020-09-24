@@ -1,5 +1,9 @@
+html {
+  height: 80%;
+}
+
 body {
-  padding: 50px;
+  height: 100%;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
@@ -14,10 +18,17 @@ td {
 
 table {
   background-color: burlywood;
+  width: 90%;
+  height: 90%;
 }
 
 #div_board{
   display: none;
+  height: 100%;
+}
+
+#btnCreateRoom{
+  display: inline-block;
 }
 
 #btnLeaveRoom{
@@ -27,6 +38,29 @@ table {
 .stoneBlink {
   animation: blink-animation 0.5s steps(5, start) infinite alternate;
   -webkit-animation: blink-animation 0.5s steps(5, start) infinite alternate;
+}
+
+.main_div {
+  position: relative;
+  margin: 0 auto;
+  width: 50%;
+  height: 100%;
+}
+
+@media screen and (max-width: 1024px) {
+  .main_div {
+    position: relative;
+    margin: 0 auto;
+    width: 95%;
+  }
+
+  html {
+    height: 50%;
+  }
+}
+
+
+.button_div{
 }
 
 @keyframes blink-animation {
