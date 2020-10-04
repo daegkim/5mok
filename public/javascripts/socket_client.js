@@ -28,6 +28,11 @@ window.onload = () => {
     $('#btnLeaveRoom').click(() => {
         socket.emit('leave_room')
     })
+
+    var h = $('table').css('height').replace('%', '')
+    var body_height = $('body').css('height').replace('px')
+
+    $('#div_board').find('table').css('width', parseInt(h) * parseInt(body_height) / 100 )
 }
 
 socket.on('connect', () => {

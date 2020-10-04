@@ -1,0 +1,41 @@
+html {
+    height: 100%;
+}
+  
+body {
+    height: 100%;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+.div-header {
+    display: table;
+    height: 60px;
+    width: 100%;
+    padding-left: 10%;
+    padding-right: 10%;
+    background-color: black;
+}
+
+.div-header > p {
+    width: 50px;
+    padding: 0px;
+    display: table-cell;
+    font-size: 2rem;
+    color: white;
+    vertical-align: middle;
+}
+
+.div-header > span {
+    display: table-cell;
+    width: calc(100% -160px);
+}
+
+.div-header-btns {
+    width: 160px;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.div-header-btns > button {
+    margin: 0px;
+}

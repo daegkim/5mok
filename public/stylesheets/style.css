@@ -1,24 +1,11 @@
-html {
-  height: 80%;
-}
-
-body {
-  height: 100%;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-}
-
-a {
-  color: #00B7FF;
-}
-
-td {
+#div_board > td {
   border: 1px solid black;
   padding: 10px;
 }
 
-table {
-  background-color: burlywood;
-  width: 90%;
+#div_board > table {
+  background-color: burlywood !important;
+  width: 80%;
   height: 90%;
 }
 
@@ -43,7 +30,7 @@ table {
 .main_div {
   position: relative;
   margin: 0 auto;
-  width: 50%;
+  width: 80%;
   height: 100%;
 }
 
@@ -54,13 +41,13 @@ table {
     width: 95%;
   }
 
-  html {
-    height: 50%;
+  .header {
+    padding-left: 5px;
   }
-}
 
-
-.button_div{
+  html {
+    height: 80%;
+  }
 }
 
 @keyframes blink-animation {

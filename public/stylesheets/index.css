@@ -1,0 +1,27 @@
+.div-main {
+  padding-left: 10%;
+  padding-right: 10%;
+  padding-top: 50px;
+  height: 100%;
+  margin: 0px;
+}
+
+.div-title {
+  display: table;
+  margin-bottom: 5px;
+}
+
+.div-title > p {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.div-title > span {
+  display: table-cell;
+  width: 100%
+}
+
+.div-title > button {
+  display: table-cell;
+  vertical-align: middle;
+}

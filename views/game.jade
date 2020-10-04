@@ -1,0 +1,11 @@
+extends layout
+
+block content
+
+    div#div_board
+      table
+        tbody
+          -for(var i=0; i<18; i++)
+              tr
+                -for(var j=0; j<18; j++)
+                    td(id = "td" + (i*18 + j))
