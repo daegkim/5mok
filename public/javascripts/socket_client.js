@@ -2,12 +2,7 @@ var socket = io({
     transport: ['websocket']
 });
 
-var isInRoom = false
-var room_id = -1
-var player = -1
-var turn = 1
-var canStart = false
-var oppentStone = ''
+var roomId = -1
 
 const msg_join_fail = 'You\'re already in the room'
 const msg_welcome = 'Welcome to room'
@@ -15,30 +10,65 @@ const msg_full = 'This room is already full'
 const msg_leave = ' leaves this room'
 
 window.onload = () => {
-    $('#btnCreateRoom').click(() => {
-        if(room_id >= 0){
-            alert(msg_join_fail + room_id)
-            return
-        }
-        else{
-            socket.emit('create_room')
-        }
-    })
+}
 
-    $('#btnLeaveRoom').click(() => {
-        socket.emit('leave_room')
-    })
-
-    var h = $('table').css('height').replace('%', '')
-    var body_height = $('body').css('height').replace('px')
-
-    $('#div_board').find('table').css('width', parseInt(h) * parseInt(body_height) / 100 )
+addToTbRooms = (_room) => {
+  var newRoomRow = '<tr id=\'room' + _room.roomId + '\'>'
+  newRoomRow += '<th>' + _room.roomId + '</th>'
+  newRoomRow += '<td>' + _room.roomName + '</td>'
+  newRoomRow += '<td>' + _room.owner + '</td>'
+  newRoomRow += '<td class=\'memCnt\'>' + _room.memberCount + '</td>'
+  newRoomRow += '<td>' + _room.createTime + '</td>'
+  newRoomRow += '<td hidden>' + _room.roomId + '</td>'
+  $('#tbRooms > tbody:last').append(newRoomRow)
 }
 
 socket.on('connect', () => {
     console.log('connect to socket')
 })
 
+socket.on('send_rooms', (_rooms) => {
+  for(let room of _rooms){
+    addToTbRooms(room)
+  }
+})
+
+socket.on('success_create_room', (_room) => {
+  console.log(_room)
+  addToTbRooms(_room)
+  if(_room.owner === $('#txtUserId').text()){
+    $('input[name="roomId"]').val(_room.roomId)
+    $('input[name="userId"]').val($('#txtUserId').text())
+    $('#formOpenGame').attr('action', './game')
+    $('#formOpenGame').attr('method', 'post')
+    $('#formOpenGame').submit()
+  }
+})
+
+socket.on('success_join_room', (_room) => {
+  //1. 내가 요청한 거면 아무것도 안해도 됨
+  //2. 같은 방에 있는 타인이 요청한거면 경고창 띄움
+  //3. 완전 다른 사람인데
+  //3.1. 대기실에 있으면 방 목록의 인원수 변경
+  //3.2. 게임 중이면 아무것도 안함
+  console.log(_room.userId, $('#txtUserId').text())
+  if(_room.userId === $('txtUserId').text()){
+    return
+  }
+
+  if(_room.roomId === roomId){
+    alert(_room.userId)
+    return
+  }
+
+  if($('#txtPos').text() === 'index'){
+    //방 목록의 인원 수 변경
+    console.log('hello')
+    $('#' + 'room' + String(_room.roomId)).find('td.memCnt').html(_room.memberCount)
+  }
+})
+
+//구버전
 socket.on('create_room', (data) => {
     if(data.members[0] === socket.id){
         room_id = data.room_id

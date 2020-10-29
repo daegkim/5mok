@@ -1,11 +1,32 @@
 extends layout
 
-block content
+block leftContent
+  p#txtRoomId(hidden)= roomId
+  div.div-title
+    p Board   
+    span
+    button.btn.btn-secondary.btn-sm Leave
+  div.div-board
+    table.tb-board
+      tbody
+        -for(var i=0; i<15; i++)
+          tr
+            -for(var j=0; j<15; j++)
+              td
+                div.div-board-cell(id = "cell" + (i*15 + j))
+block rightContent
+  div.div-chat
+    h3 chatting
+    div.div-chat-history
+      p.text-left 상대방 : hello
+      p.text-right 나 : hi
+    div.div-chat-input.input-group.mb-3
+      input.form-control(type='text')
+      div.input-group-append
+        button.btn.btn-outline-secondary Send
+block otherContent
+  script.
+    var roomId = $('#txtRoomId').text()
+    var userId = $('#txtUserId').text()
+    socket.emit('join_room', {roomId: roomId, userId: userId})
 
-    div#div_board
-      table
-        tbody
-          -for(var i=0; i<18; i++)
-              tr
-                -for(var j=0; j<18; j++)
-                    td(id = "td" + (i*18 + j))

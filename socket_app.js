@@ -1,41 +1,112 @@
-var io = require('socket.io')({
-    transports: ['websocket']
-});
+var io = require('socket.io')({ transports: ['websocket'] });
 var game = require('./game/algorithm');
+var util = require('./utils/util')
 
-var room_info = []
+var rooms = []
 /*
-{
-    room_id: 1,
-    members: []
-    game: 
+room = {
+  roomId: number,
+  roomName: string,
+  roomPwd: string,
+  createTime: string,
+  members: [[userId, socketId],[userId, socketId]],
+  owner: string
+  game: game
 }
 */
 
 io.on('connect', (socket) => {
-    console.log('socket_app connected')
+  console.log('socket_app connected')
 
-    socket.on('create_room', () => {
-        let room_len = room_info.length
-        let new_room_id = 1
-
-        if(room_len > 0){
-            new_room_id = room_info[room_len - 1].room_id + 1
-        }
-
-        let new_room = {
-            room_id: new_room_id,
-            members: [socket.id],
-            game: new game()
-        }
-
-        room_info.push(new_room)
-
-        socket.join('room' + new_room_id)
-
-        io.emit('create_room', new_room)
+  // 처음 접속한 유저에게 현재 존재하는 방 목록을 보여줌
+  var roomsForClient = []
+  for(var room of rooms){
+    roomsForClient.push({
+      roomId: room.roomId,
+      roomName: room.roomName,
+      owner: room.owner,
+      isPwdSet: (room.roomPwd === null || room.roomPwd === undefined) ? false : true,
+      createTime: room.createTime,
+      memberCount: room.members.length
     })
+  }
+  io.to(socket.id).emit('send_rooms', roomsForClient)
 
+  //방을 만들겠다는 요청이 들어온 경우
+  socket.on('create_room', (_room) => {
+    try{
+      let roomLen = rooms.length
+      let roomId = 1
+      let date = new util().getTimeStamp()
+
+      if(roomLen > 0){
+        roomId = rooms[roomLen - 1].roomId + 1
+      }
+
+      rooms.push({
+        roomId: roomId,
+        roomName: _room.roomName,
+        roomPwd: _room.roomPwd,
+        createTime: date,
+        members: [],
+        owner: _room.owner,
+        game: new game()
+      })
+
+      io.emit('success_create_room', {
+        roomId: roomId,
+        roomName: _room.roomName,
+        owner: _room.owner,
+        memberCount: 0,
+        createTime: date,
+      })
+    }
+    catch (err){
+      console.log(err)
+      io.emit('fail_create_room')
+    }
+  })
+
+  //방에 참가하겠다는 요청이 들어온 경우
+  socket.on('join_room', (_room) => {
+    //rooms에서 room을 찾아서 members에 사람을 넣는다.
+    //1. 만약 주인이 들어가려는 경우 : PWD체크안함
+    //2. 만약 타인이 들어가려는 경우 : PWD체크함
+    //3. 방이 꽉 찼으면 못 들어감
+    //4. 성공적으로 방에 들어가졌으면 전체에게 한 명 들어왔다고 말해줘서 인원 수 업데이트 해야함
+    console.log(_room)
+    for(var room of rooms){
+      if(room.roomId === parseInt(_room.roomId)){
+        //방이 꽉 찬 경우
+        if(room.members.length === 2){
+          //error
+        }
+
+        //방 주인이 아니고 비밀번호가 틀린 경우
+        if(room.owner !== _room.userId){
+          if(room.roomPwd !== _room.roomPwd){
+            //error
+          }
+        }
+
+        //방에 들어가기
+        socket.join('room' + _room.roomId)
+
+        room.members.push({
+          userId: _room.userId,
+          socketId: socket.id
+        })
+
+        io.emit('success_join_room', {
+          roomId: room.roomId,
+          userId: _room.userId,
+          memberCount: room.members.length
+        })
+        break
+      }
+    }
+  })
+    /*
     socket.on('join_room', (data) => {
         let result = false
 
@@ -91,8 +162,10 @@ io.on('connect', (socket) => {
     })
 
     io.to(socket.id).emit('init_room_info', room_info)
+    */
 })
 
+/*
 const leave_room = (socket) => {
     let room_id = -1
     let isRoomDeleted = false
@@ -164,5 +237,5 @@ const getGameByRoomId = (_room_id) => {
     }
     return result
 }
-
+*/
 module.exports = io;

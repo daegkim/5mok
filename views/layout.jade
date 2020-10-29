@@ -10,6 +10,7 @@ html
     link(rel='stylesheet', href='/stylesheets/style.css')
     link(rel='stylesheet', href='/stylesheets/layout.css')
     link(rel='stylesheet', href='/stylesheets/index.css')
+    link(rel='stylesheet', href='/stylesheets/game.css')
 
     script(src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
     integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous")
@@ -20,15 +21,24 @@ html
     script(src="https://uicdn.toast.com/editor/latest/toastui-jquery-editor-viewer.min.js")
     script(src='/javascripts/socket.io.js')
     script(src='/javascripts/socket_client.js')
-    script(src='/javascripts/toastui-readme.js')
+    script(src='/javascripts/index_client.js')
     
   body
     div.div-header
       p= title
+      p#txtUserId(hidden)= userId
+      p#txtPos(hidden)= pos
       //양옆 정렬을 위한 span
       span
       div.div-header-btns
         button(style="margin-right: 5px").btn.btn-primary SignIn
         button.btn.btn-success SignUp
 
-    block content
+    div.div-main.container-fluid
+      div.row.div-first-row
+        div.div-left.col-5
+          block leftContent
+        span.col-2
+        div.div-righ.col-5
+          block rightContent
+    block otherContent

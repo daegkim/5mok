@@ -1,16 +1,62 @@
 extends layout
 
-block content
-  div.main_div
-    div.button_div
-      button#btnCreateRoom Create Room
-      button#btnLeaveRoom Leave Room
-    div#divRoomList
-
-    div#div_board
-      table
-        tbody
-          -for(var i=0; i<18; i++)
-              tr
-                -for(var j=0; j<18; j++)
-                    td(id = "td" + (i*18 + j))
+block leftContent
+  div.div-title
+    p Roomlist
+    span
+    button.btn.btn-secondary.btn-sm(type='button',data-toggle='modal', data-target='#modal-createRoom',
+    data-backdrop='static', data-keyboard='false') Create
+  div.div-table
+    table#tbRooms.table.table-hover
+      thead
+        tr
+          th #
+          th 방제목
+          th 방장
+          th 인원수
+          th 시간
+      tbody
+        -for(var i=0; i<rooms.length; i++)
+          tr
+            th #{rooms[i].roomId}
+            td #{rooms[i].roomName}
+            td #{rooms[i].userName}
+            td #{rooms[i].userNumRatio}
+            td #{rooms[i].time}
+            td(hidden)
+block rightContent
+  div#viewer
+block otherContent
+  div#modal-createRoom.modal.fade(tabindex='-1', roll='dialog', area-labelledby='Create Room', area-hidden='true')
+    div.modal-dialog(role='documnet')
+      div.modal-content
+        div.modal-header
+          h5.modal-title Create Room
+          button.close(type='button', data-dismiss='modal', area-label='Close')
+            span(area-hidden='true') &times;
+        div.modal-body
+          form
+            div.form-group.row
+              div.col-sm-9
+                div.row
+                  label.col-sm-3.col-form-label RoomName
+                  div.col-sm-9
+                    input#txtRoomName.form-control(type='text')
+              div.col-sm-3
+                div.form-check.form-check-inline(style='padding-top: 7px; padding-botton: 7px')
+                  input#chkRoomPwd.form-check-input(type='checkbox')
+                  label.form-check-label 비번방
+            div.form-group.row
+              div.col-sm-9
+                div.row
+                  label.col-sm-3.col-form-label Password
+                  div.col-sm-9
+                    input#txtRoomPwd.form-control(type='password', disabled)
+              div.col-sm-3
+        div.modal-footer
+          button#btnCreateRoom.btn.btn-primary(type='button') Create
+          button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+  div
+    form#formOpenGame
+      input(type='hidden' name='roomId')
+      input(type='hidden' name='userId')
