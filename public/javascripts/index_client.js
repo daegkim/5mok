@@ -17,8 +17,8 @@ $(document).ready(() => {
 
   //Create 버튼 클릭시
   $('#btnCreateRoom').click(() => {
-    var roomName = $('#txtRoomName').text()
-    var roomPwd = ''
+    var roomName = $('#txtRoomName').val()
+    var roomPwd = $('#txtRoomPwd').val()
     var chkRoomPwd = $('#chkRoomPwd').is(':checked')
     var userId = $('#txtUserId').text()
 
@@ -27,7 +27,6 @@ $(document).ready(() => {
     }
 
     if(chkRoomPwd){
-      roomPwd = $('#txtRoomPwd').text()
       if(roomPwd === undefined || roomPwd === null || roomPwd === ''){
         roomPwd = null
       }
@@ -37,6 +36,21 @@ $(document).ready(() => {
       roomName: roomName,
       roomPwd: roomPwd,
       owner: userId,
+    })
+  })
+
+  //방목록 클릭시
+  $(document).on('click', '.roomName', function() {
+    /*
+    $(this)를 사용하려면 arrow function을 사용하면 안된다.
+    arrow function은 자신의 this, arguments, super, new.target을 바인딩 하지 않는다.
+    그야말로 익명함수
+    */
+    let tmpRoomId = parseInt($(this).closest('tr').children('.roomId').text())
+    let tmpUserId = $('#txtUserId').text()
+    socket.emit('join_room', {
+      roomId: tmpRoomId,
+      userId: tmpUserId
     })
   })
 })

@@ -3,6 +3,7 @@ var socket = io({
 });
 
 var roomId = -1
+var player = -1
 
 const msg_join_fail = 'You\'re already in the room'
 const msg_welcome = 'Welcome to room'
@@ -15,11 +16,12 @@ window.onload = () => {
 addToTbRooms = (_room) => {
   var newRoomRow = '<tr id=\'room' + _room.roomId + '\'>'
   newRoomRow += '<th>' + _room.roomId + '</th>'
-  newRoomRow += '<td>' + _room.roomName + '</td>'
+  newRoomRow += '<td class=\'roomName\'>' + _room.roomName + '</td>'
   newRoomRow += '<td>' + _room.owner + '</td>'
   newRoomRow += '<td class=\'memCnt\'>' + _room.memberCount + '</td>'
   newRoomRow += '<td>' + _room.createTime + '</td>'
-  newRoomRow += '<td hidden>' + _room.roomId + '</td>'
+  newRoomRow += '<td class=\'roomId\' hidden>' + _room.roomId + '</td>'
+  newRoomRow += '</tr>'
   $('#tbRooms > tbody:last').append(newRoomRow)
 }
 
@@ -29,7 +31,7 @@ socket.on('connect', () => {
 
 socket.on('send_rooms', (_rooms) => {
   for(let room of _rooms){
-    addToTbRooms(room)
+    addToTbRooms(room, socket)
   }
 })
 
@@ -46,29 +48,54 @@ socket.on('success_create_room', (_room) => {
 })
 
 socket.on('success_join_room', (_room) => {
-  //1. 내가 요청한 거면 아무것도 안해도 됨
-  //2. 같은 방에 있는 타인이 요청한거면 경고창 띄움
-  //3. 완전 다른 사람인데
-  //3.1. 대기실에 있으면 방 목록의 인원수 변경
-  //3.2. 게임 중이면 아무것도 안함
-  console.log(_room.userId, $('#txtUserId').text())
-  if(_room.userId === $('txtUserId').text()){
-    return
-  }
-
-  if(_room.roomId === roomId){
-    alert(_room.userId)
-    return
-  }
-
-  if($('#txtPos').text() === 'index'){
-    //방 목록의 인원 수 변경
-    console.log('hello')
+  //대기실에 있으면 누구든 방 목록의 인원수 변경
+  if($(location).attr('pathname') === '/'){
     $('#' + 'room' + String(_room.roomId)).find('td.memCnt').html(_room.memberCount)
+    if(_room.userId === $('#txtUserId').text()){
+      $('input[name="roomId"]').val(_room.roomId)
+      $('input[name="userId"]').val($('#txtUserId').text())
+      $('#formOpenGame').attr('action', './game')
+      $('#formOpenGame').attr('method', 'post')
+      $('#formOpenGame').submit()
+    }
+    //방에 들어가려고 한 인원이면 방 이동
+    return
+  }
+
+  //게임방에 있는 경우, 다른 인원은 경고창 발생
+  if($(location).attr('pathname') === '/game'){
+    if(_room.userId === $('#txtUserId').text()){
+      player = _room.player
+    }
+    else{
+      if(_room.roomId === roomId){
+        alert(_room.userId)
+      }
+    }
   }
 })
 
+socket.on('fail_join_room', (_error) => {
+  alert(_error)
+})
+
+socket.on('leave_room', (_room) => {
+  //대기실에 있으면 누구든 방 목록의 인원수 변경
+  if($(location).attr('pathname') === '/'){
+    var row = $('#' + 'room' + String(_room.roomId))
+    if(_room.isDeletedRoom){
+      row.remove()
+    }
+    else{
+      row.find('td.memCnt').html(_room.memberCount)
+    }
+    return
+  }
+})
+
+
 //구버전
+/*
 socket.on('create_room', (data) => {
     if(data.members[0] === socket.id){
         room_id = data.room_id
@@ -146,7 +173,7 @@ socket.on('init_room_info', (data) => {
         document.getElementById('divRoomList').appendChild(btnNewRoom)
     }
 })
-
+*/
 socket.on('putStoneOnMap', (data) => {
     //1. 체크메이트인 경우
     //1.1. 이긴 사람 화면 : 당신이 이겼습니다.
@@ -183,32 +210,6 @@ socket.on('putStoneOnMap', (data) => {
         }
     }
 })
-
-function createRoomButton(_room_id, _member_num){
-    let btnNewRoom = document.createElement('button')
-    btnNewRoom.innerHTML = '<p>'+ 'room' + _room_id + '</p>'
-    if(_member_num === 1){
-        btnNewRoom.innerHTML += '<p id=' + _room_id + '>'+ 'member_num : ' + _member_num + '</p>'
-    }
-    else{
-        btnNewRoom.innerHTML += '<p id=' + _room_id + '>'+ 'this room is full' + '</p>'
-    }
-    //add join event
-    btnNewRoom.onclick = () => {
-        if(room_id >= 0){
-            alert(msg_join_fail + room_id)
-            return
-        }
-        room_id = _room_id
-        socket.emit('join_room', _room_id)
-    }
-    return btnNewRoom
-}
-
-function deleteRoomButton(_room_id){
-    let btnSelected = document.getElementById(_room_id).parentElement
-    document.getElementById('divRoomList').removeChild(btnSelected)
-}
 
 function tb_click(e){
     //이미 바둑알이 있는 경우 둘 수 없음

@@ -25,8 +25,10 @@ block rightContent
       div.input-group-append
         button.btn.btn-outline-secondary Send
 block otherContent
+block scriptContent
+  script(src='/javascripts/game_client.js')
   script.
-    var roomId = $('#txtRoomId').text()
+    roomId = parseInt($('#txtRoomId').text())
     var userId = $('#txtUserId').text()
     socket.emit('join_room', {roomId: roomId, userId: userId})
 

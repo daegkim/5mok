@@ -15,10 +15,7 @@ room = {
 }
 */
 
-io.on('connect', (socket) => {
-  console.log('socket_app connected')
-
-  // 처음 접속한 유저에게 현재 존재하는 방 목록을 보여줌
+var showRooms = (socket) => {
   var roomsForClient = []
   for(var room of rooms){
     roomsForClient.push({
@@ -30,7 +27,15 @@ io.on('connect', (socket) => {
       memberCount: room.members.length
     })
   }
-  io.to(socket.id).emit('send_rooms', roomsForClient)
+
+  io.to(socket.id).emit('send_rooms', roomsForClient) 
+}
+
+io.on('connect', (socket) => {
+  console.log('socket_app connected')
+
+  // 처음 접속한 유저에게 현재 존재하는 방 목록을 보여줌
+  showRooms(socket)
 
   //방을 만들겠다는 요청이 들어온 경우
   socket.on('create_room', (_room) => {
@@ -75,16 +80,25 @@ io.on('connect', (socket) => {
     //3. 방이 꽉 찼으면 못 들어감
     //4. 성공적으로 방에 들어가졌으면 전체에게 한 명 들어왔다고 말해줘서 인원 수 업데이트 해야함
     console.log(_room)
+    var error = ''
+    var isSuccess = false
     for(var room of rooms){
       if(room.roomId === parseInt(_room.roomId)){
         //방이 꽉 찬 경우
         if(room.members.length === 2){
+          error = 'This room is full'
+          break
           //error
         }
 
         //방 주인이 아니고 비밀번호가 틀린 경우
         if(room.owner !== _room.userId){
+          if(_room.roomPwd === undefined || _room.roomPwd === null){
+            _room.roomPwd = ''
+          }
           if(room.roomPwd !== _room.roomPwd){
+            error = 'Wrong password'
+            break
             //error
           }
         }
@@ -100,13 +114,78 @@ io.on('connect', (socket) => {
         io.emit('success_join_room', {
           roomId: room.roomId,
           userId: _room.userId,
-          memberCount: room.members.length
+          memberCount: room.members.length,
+          owner: room.owner,
+          player: room.members.length
         })
+        
+        isSuccess = true
         break
       }
     }
+
+    if(!isSuccess){
+      if(error === ''){
+        error = 'There is no room'
+      }
+      io.to(socket.id).emit('fail_join_room', error)
+    }
   })
-    /*
+
+  socket.on('disconnect', () => {
+    //1. 현재 있는 방에서 나간다.
+    //1.1. 나갈 때 내가 마지막 방의 인원이면 해당 방을 삭제시킨다.
+    //1.2. 이 인원이 존재하는 방이 없으면 그냥 끝
+    //2. 전체 인원들에게 어떤 방의 누가 나갔는지 알려준다.
+    var canFind = false
+    var isDeletedRoom = false
+    var roomId = ''
+    var memberCount = 0
+    for(var room of rooms){
+      for(var member of room.members){
+        if(member.socketId === socket.id){
+          canFind = true
+          roomId = room.roomId
+          var result = room.members.splice(room.members.indexOf(member), 1)
+          roomId = room.roomId
+          memberCount = room.members.length
+          //내가 마지막 방의 인원이면 해당 방을 삭제
+          if(memberCount === 0 && result !== []){
+            rooms.splice(rooms.indexOf(room), 1)
+            isDeletedRoom = true
+          }
+          break
+        }
+      }
+      if(canFind) {
+        break
+      }
+    }
+    if(canFind){
+      io.emit('leave_room', {
+        isDeletedRoom: isDeletedRoom,
+        roomId: roomId,
+        memberCount: memberCount
+      })
+    }
+  })
+
+  socket.on('put_stone_on_map', () => {
+    let room_id = getRoomIDBySocketID(socket.id)
+    let room_game = getGameByRoomId(room_id)
+
+    let result = room_game.putStoneOnMap(data.x, data.y, data.player)
+    let send_data = {
+      result: result,
+      pos: parseInt(data.x) * 18 + parseInt(data.y),
+      player: data.player,
+      socket_id: socket.id,
+      turn: data.player === 1 ? 2 : 1
+    }
+
+    io.to('room' + room_id).emit('success_put_stone_on_map', send_data)
+  })
+  /*
     socket.on('join_room', (data) => {
         let result = false
 
