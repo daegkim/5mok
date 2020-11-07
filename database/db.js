@@ -10,7 +10,7 @@ class db {
 
     mongoose.connect('mongodb://localhost:27017/testdb', {useNewUrlParser: true}, (err) => { if(err) console.log(err) })
   }
-
+//
   getRoomList(callback){
     room.find({useFlag: true}).sort('roomId').exec()
     .then((res) => {
