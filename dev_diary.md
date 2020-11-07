@@ -70,4 +70,4 @@
 - 기보 저장
 - 기보 리플레이
 - react로 리팩토링
-- sanggan과의 협업
+- sanggan과의 협업 / 2차 git test
