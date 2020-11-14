@@ -9,11 +9,11 @@ block leftContent
   div.div-board
     table.tb-board
       tbody
-        -for(var i=0; i<15; i++)
+        -for(var i=0; i<18; i++)
           tr
-            -for(var j=0; j<15; j++)
+            -for(var j=0; j<18; j++)
               td
-                div.div-board-cell(id = "cell" + (i*15 + j))
+                div.div-board-cell(id = "cell" + (i*18 + j))
 block rightContent
   div.div-chat
     h3 chatting
