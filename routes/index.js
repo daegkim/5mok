@@ -14,4 +14,8 @@ router.post('/game', function(req, res, next) {
   res.render('game', { title: '5mok', roomId: req.body.roomId, userId: req.body.userId, pos: 'game' });
 });
 
+router.post('/sign_up', function(req, res, next) {
+  res.send({error: null, name:'5mok'})
+})
+
 module.exports = router;

@@ -35,13 +35,13 @@ block otherContent
           button.close(type='button', data-dismiss='modal', area-label='Close')
             span(area-hidden='true') &times;
         div.modal-body
-          form
+          form#formCreateRoom
             div.form-group.row
               div.col-sm-9
                 div.row
                   label.col-sm-3.col-form-label RoomName
                   div.col-sm-9
-                    input#txtRoomName.form-control(type='text')
+                    input.form-control(type='text', name='name')
               div.col-sm-3
                 div.form-check.form-check-inline(style='padding-top: 7px; padding-botton: 7px')
                   input#chkRoomPwd.form-check-input(type='checkbox')
@@ -51,11 +51,70 @@ block otherContent
                 div.row
                   label.col-sm-3.col-form-label Password
                   div.col-sm-9
-                    input#txtRoomPwd.form-control(type='password', disabled)
+                    input#txtRoomPwd.form-control(type='password', name='pwd', disabled)
               div.col-sm-3
         div.modal-footer
           button#btnCreateRoom.btn.btn-primary(type='button') Create
           button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+  
+  div#modal-signup.modal.fade(tabindex='-1', roll='dialog', area-labelledby='Sign Up', area-hidden='true')
+    div.modal-dialog(role='documnet')
+      div.modal-content
+        div.modal-header
+          h5.modal-title Sign Up
+          button.close(type='button', data-dismiss='modal', area-label='Close')
+            span(area-hidden='true') &times;
+        div.modal-body
+          form#formSignUp
+            div.form-group.row
+              div.col-sm-9
+                div.row
+                  label.col-sm-3.col-form-label UserName
+                  div.col-sm-9
+                    input.form-control(type='text', name='name')
+            div.form-group.row
+              div.col-sm-9
+                div.row
+                  label.col-sm-3.col-form-label Id
+                  div.col-sm-9
+                    input.form-control(type='text', name='id')
+            div.form-group.row
+              div.col-sm-9
+                div.row
+                  label.col-sm-3.col-form-label Password
+                  div.col-sm-9
+                    input.form-control(type='password', name='pwd')
+              div.col-sm-3
+        div.modal-footer
+          button#btnSignUp.btn.btn-primary(type='button') SignUp
+          button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+
+  div#modal-signin.modal.fade(tabindex='-1', roll='dialog', area-labelledby='Sign Up', area-hidden='true')
+    div.modal-dialog(role='documnet')
+      div.modal-content
+        div.modal-header
+          h5.modal-title Sign Up
+          button.close(type='button', data-dismiss='modal', area-label='Close')
+            span(area-hidden='true') &times;
+        div.modal-body
+          form
+            div.form-group.row
+              div.col-sm-9
+                div.row
+                  label.col-sm-3.col-form-label Id
+                  div.col-sm-9
+                    input#txtUserIdSignIn.form-control(type='text')
+            div.form-group.row
+              div.col-sm-9
+                div.row
+                  label.col-sm-3.col-form-label Password
+                  div.col-sm-9
+                    input#txtUserPwdSignIn.form-control(type='password')
+              div.col-sm-3
+        div.modal-footer
+          button#btnSignIn.btn.btn-primary(type='button') Create
+          button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+
   div
     form#formOpenGame
       input(type='hidden' name='roomId')

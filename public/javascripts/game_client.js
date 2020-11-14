@@ -8,7 +8,7 @@ $(document).ready(() => {
       alert('Not your turn')
       return
     }
-    $(this).css('background-color', color)
+    //$(this).css('background-color', color)
 
     var x = $(this).closest('td').closest('tr')[0].rowIndex
     var y = $(this).closest('td')[0].cellIndex

@@ -42,6 +42,17 @@ const getGameByRoomId = (_roomId) => {
   return result
 }
 
+const getRoomByRoomId = (_roomId) => {
+  var result = null
+  for(var room of rooms){
+    if(room.roomId === _roomId){
+      result = room
+      break
+    }
+  }
+  return result
+}
+
 io.on('connect', (socket) => {
   console.log('socket_app connected')
 
@@ -105,7 +116,7 @@ io.on('connect', (socket) => {
         //방 주인이 아니고 비밀번호가 틀린 경우
         if(room.owner !== _room.userId){
           if(_room.roomPwd === undefined || _room.roomPwd === null){
-            _room.roomPwd = ''
+            _room.roomPwd = null
           }
           if(room.roomPwd !== _room.roomPwd){
             error = 'Wrong password'
@@ -183,15 +194,21 @@ io.on('connect', (socket) => {
 
   socket.on('put_stone_on_map', (_data) => {
     let roomId = _data.roomId
-    let game = getGameByRoomId(roomId)
+    let selectedGame = getGameByRoomId(roomId)
 
-    let result = game.putStoneOnMap(_data.x, _data.y, _data.player)
+    let result = selectedGame.putStoneOnMap(_data.x, _data.y, _data.player)
+    //result가 true면 경기 끝난 것
     let sendData = {
       result: result,
       pos: parseInt(_data.x) * 18 + parseInt(_data.y),
       player: _data.player,
       socket_id: socket.id,
       turn: _data.player === 1 ? 2 : 1
+    }
+
+    if(result !== undefined && result){
+      var room = getRoomByRoomId(roomId)
+      room.game = new game()
     }
 
     io.to('room' + roomId).emit('success_put_stone_on_map', sendData)

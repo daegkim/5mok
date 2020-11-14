@@ -104,11 +104,14 @@ socket.on('success_put_stone_on_map', (_data) => {
   //3. undefined라면
   //3.1. 둔 사람 화면만 : 해당 위치에 이미 있음
   if(_data.result === undefined){
-    alert('해당 위치에 이미 말이 있습니다')
+    if(_data.player === player){
+      alert('해당 위치에 이미 말이 있습니다')
+    }
     return
   }
 
   turn = _data.turn
+
   let color = _data.player === 1 ? 'black' : 'white'
   $('#cell'+_data.pos).css('background-color', color)
 
@@ -130,6 +133,6 @@ socket.on('success_put_stone_on_map', (_data) => {
 })
 
 function init_board(){
-    $('#div-board-cell').css('background-color', 'rgba(0, 0, 0, 0)')
+    $('.div-board-cell').css('background-color', 'rgba(0, 0, 0, 0)')
     turn = 1
 }

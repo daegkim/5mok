@@ -17,25 +17,55 @@ $(document).ready(() => {
 
   //Create 버튼 클릭시
   $('#btnCreateRoom').click(() => {
-    var roomName = $('#txtRoomName').val()
-    var roomPwd = $('#txtRoomPwd').val()
-    var chkRoomPwd = $('#chkRoomPwd').is(':checked')
+    var dataArr = $('#formCreateRoom').serializeArray()
+
+    var dataJSON = {}
+    for(var i of dataArr){
+      dataJSON[i.name] = i.value
+    }
+    
+    var roomName = dataJSON.name
+    var roomPwd = dataJSON.pwd
     var userId = $('#txtUserId').text()
 
     if(roomName === undefined || roomName === null || roomName === ''){
       roomName = userId + '\'s room'
     }
 
-    if(chkRoomPwd){
-      if(roomPwd === undefined || roomPwd === null || roomPwd === ''){
-        roomPwd = null
-      }
+    if(roomPwd === undefined || roomPwd === ''){
+      roomPwd = null
     }
 
     socket.emit('create_room', {
       roomName: roomName,
       roomPwd: roomPwd,
       owner: userId,
+    })
+  })
+
+  //SignUp 버튼 클릭시
+  $('#btnSignUp').click(() => {
+    var dataArr = $('#formSignUp').serializeArray()
+    var dataJSON = {}
+    for(var i of dataArr){
+      dataJSON[i.name] = i.value
+    }
+
+    $.ajax({
+      url: './sign_up',
+      type: 'post',
+      data: JSON.stringify(dataJSON),
+    })
+    .done((_data) => {
+      if(_data.error === undefined || _data.error === null){
+        $('#modal-signup').modal('hide')
+        setTimeout(() => {
+          alert("COMPLETE REGISTERATION! PLEASE SIGN IN!")
+        }, 500)
+      }
+      else{
+        alert(error)
+      }
     })
   })
 
