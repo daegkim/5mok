@@ -69,6 +69,31 @@ $(document).ready(() => {
     })
   })
 
+  $('#btnSignIn').click(() => {
+    var dataArr = $('#formSignIn').serializeArray()
+    var dataJSON = {}
+    for(var i of dataArr){
+      dataJSON[i.name] = i.value
+    }
+
+    $.ajax({
+      url: './sign_in',
+      type: 'post',
+      data: JSON.stringify(dataJSON),
+    })
+    .done((_data) => {
+      if(_data.error === undefined || _data.error === null){
+        $('#modal-signin').modal('hide')
+        setTimeout(() => {
+          alert(_data.id)
+        }, 500)
+      }
+      else{
+        alert(error)
+      }
+    })
+  })
+
   //방목록 클릭시
   $(document).on('click', '.roomName', function() {
     /*
