@@ -11,6 +11,12 @@ const msg_full = 'This room is already full'
 const msg_leave = ' leaves this room'
 
 window.onload = () => {
+  var winWidth = $(window).width()
+  if(winWidth < 1000){
+    $('.div-left').removeClass('col-5')
+    $('.div-right').removeClass('col-5')
+    $('.div-first-row').children('span').remove()
+  }
 }
 
 addToTbRooms = (_room) => {
