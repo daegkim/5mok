@@ -10,7 +10,7 @@
   background-color: burlywood;
 }
 
-@media (max-width: 768px){
+@media (max-width: 1280px){
   .tb-board {
     width: 100%;
     background-color: burlywood;
