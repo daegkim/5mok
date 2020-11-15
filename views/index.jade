@@ -93,11 +93,11 @@ block otherContent
     div.modal-dialog(role='documnet')
       div.modal-content
         div.modal-header
-          h5.modal-title Sign Up
+          h5.modal-title Sign In
           button.close(type='button', data-dismiss='modal', area-label='Close')
             span(area-hidden='true') &times;
         div.modal-body
-          form
+          form#formSignIn
             div.form-group.row
               div.col-sm-9
                 div.row
@@ -112,7 +112,7 @@ block otherContent
                     input#txtUserPwdSignIn.form-control(type='password')
               div.col-sm-3
         div.modal-footer
-          button#btnSignIn.btn.btn-primary(type='button') Create
+          button#btnSignIn.btn.btn-primary(type='button') SignIn
           button.btn.btn-secondary(type='button', data-dismiss='modal') Close
 
   div

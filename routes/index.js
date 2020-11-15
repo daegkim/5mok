@@ -18,4 +18,8 @@ router.post('/sign_up', function(req, res, next) {
   res.send({error: null, name:'5mok'})
 })
 
+router.post('/sign_in', function(req, res, next) {
+  res.send({error: null, id:'dgsoul'})
+})
+
 module.exports = router;
