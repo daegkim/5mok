@@ -14,7 +14,7 @@ else if(process.env.NODE_ENV === 'test'){
   setPort = '4000'
 }
 
-var port = normalizePort('4000'');
+var port = normalizePort('4000');
 app.set('port', port);
 
 var server = http.createServer(app);
