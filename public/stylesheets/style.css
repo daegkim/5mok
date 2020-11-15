@@ -33,7 +33,7 @@
   height: 100%;
 }
 
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 1280px) {
   .main_div {
     position: relative;
     margin: 0 auto;
