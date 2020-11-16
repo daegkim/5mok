@@ -5,16 +5,8 @@
 }
 
 .tb-board {
-  width: 32vw;
-  height: 32vw;
+  width: 100%;
   background-color: burlywood;
-}
-
-@media (max-width: 1280px){
-  .tb-board {
-    width: 100%;
-    background-color: burlywood;
-  }
 }
 
 .tb-board > tbody > tr, .tb-board > tbody > tr > td {
@@ -42,16 +34,4 @@
   margin: 0px;
   width: 100%;
   height: 100%;
-}
-
-@media (max-width: 1280px){
-  .div-left {
-    width: 100%;
-    height: 80%;
-  }
-
-  .div-right{
-    width: 100%;
-    height: 20%;
-  }
 }

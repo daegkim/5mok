@@ -1,5 +1,6 @@
 html {
   height: 100%;
+  font-size: 20px;
 }
   
 body {
@@ -18,32 +19,57 @@ body {
 }
 
 .div-header {
-  display: table;
-  height: 70px;
+  display: flex;
+  height: 10%;
   width: 100%;
   padding-left: 10%;
   padding-right: 10%;
   background-color: black;
+  align-items: center;
 }
 
 .div-header > p {
-  min-width: 50px;
   padding: 0px;
-  display: table-cell;
+  margin: 0px;
   font-size: 2rem;
   color: white;
-  vertical-align: middle;
+}
+
+
+@media only screen and (min-device-width: 375px) 
+and (max-device-width: 780px)
+and (-webkit-min-device-pixel-ratio: 3)
+and (orientation: portrait){
+  .div-header > p{
+    font-size: 3rem;
+  }
+
+  .div-header-btns > button{
+    font-size: 1.5rem;
+    padding: .5rem .75rem;
+  } 
+}
+
+@media only screen and (max-width: 780px){
+  .div-header > p{
+    font-size: 3rem;
+  }
+
+  .div-header-btns > button{
+    font-size: 1.5rem;
+    padding: .5rem .75rem;
+  } 
 }
 
 .div-header > span {
-  display: table-cell;
-  width: calc(100% -160px);
+  display: inline-block;
+  width: 100%;
 }
 
 .div-header-btns {
-  width: 160px;
-  display: table-cell;
+  display: inline-block;
   vertical-align: middle;
+  white-space: nowrap;
 }
 
 .div-header-btns > button {

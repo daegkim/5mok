@@ -33,7 +33,10 @@
   height: 100%;
 }
 
-@media screen and (max-width: 1280px) {
+@media only screen and (min-device-width: 375px) 
+and (max-device-width: 780px)
+and (-webkit-min-device-pixel-ratio: 3)
+and (orientation: portrait){
   .main_div {
     position: relative;
     margin: 0 auto;
@@ -46,6 +49,40 @@
 
   html {
     height: 80%;
+  }
+
+  .div-title > p {
+    font-size: 2rem;
+  }
+
+  .div-title > button {
+    font-size: 1.2rem;
+    padding: .5rem .75rem;
+  }
+}
+
+@media only screen and (max-width: 780px){
+  .main_div {
+    position: relative;
+    margin: 0 auto;
+    width: 95%;
+  }
+
+  .header {
+    padding-left: 5px;
+  }
+
+  html {
+    height: 80%;
+  }
+
+  .div-title > p {
+    font-size: 2rem;
+  }
+
+  .div-title > button {
+    font-size: 1.2rem;
+    padding: .5rem .75rem;
   }
 }
 

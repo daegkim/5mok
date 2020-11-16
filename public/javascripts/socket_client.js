@@ -10,14 +10,39 @@ const msg_welcome = 'Welcome to room'
 const msg_full = 'This room is already full'
 const msg_leave = ' leaves this room'
 
-window.onload = () => {
-  var winWidth = $(window).width()
-  if(winWidth < 1280){
+function changeElemSize(){
+  //ready에서 해야 width를 가져올 수 있음.
+  //안그러면 %로 가져와짐
+  //DOM구조에 올라가고 나서 해야 상대너비가 절대위치로 변경되는듯
+  var screenWidth = screen.width
+  var windowWidth = window.innerWidth
+
+  if(screenWidth < 480 || windowWidth < 780){
     $('.div-left').removeClass('col-5')
     $('.div-right').removeClass('col-5')
-    $('.div-first-row').children('span').remove()
+    $('.div-first-row').children('span').removeClass('col-2')
+    $('.cell-deleted').hide()
+  }
+  else{
+    $('.div-left').addClass('col-5')
+    $('.div-right').addClass('col-5')
+    $('.div-first-row').children('span').addClass('col-2')
+    $('.cell-deleted').show()
+  }
+
+  if($('.tb-board')[0] !== undefined){
+    var boardWidth = $('.tb-board').width()
+    $('.tb-board').css('height', boardWidth)
   }
 }
+
+$(document).ready(function(){
+  changeElemSize()
+
+  $(window).resize(function(){
+    changeElemSize()
+  })
+})
 
 addToTbRooms = (_room) => {
   var newRoomRow = '<tr id=\'room' + _room.roomId + '\'>'
@@ -25,10 +50,11 @@ addToTbRooms = (_room) => {
   newRoomRow += '<td class=\'roomName\'>' + _room.roomName + '</td>'
   newRoomRow += '<td>' + _room.owner + '</td>'
   newRoomRow += '<td class=\'memCnt\'>' + _room.memberCount + '</td>'
-  newRoomRow += '<td>' + _room.createTime + '</td>'
+  newRoomRow += '<td class=\'cell-deleted\'>' + _room.createTime + '</td>'
   newRoomRow += '<td class=\'roomId\' hidden>' + _room.roomId + '</td>'
   newRoomRow += '</tr>'
   $('#tbRooms > tbody:last').append(newRoomRow)
+  changeElemSize()
 }
 
 socket.on('connect', () => {
@@ -139,6 +165,6 @@ socket.on('success_put_stone_on_map', (_data) => {
 })
 
 function init_board(){
-    $('.div-board-cell').css('background-color', 'rgba(0, 0, 0, 0)')
-    turn = 1
+  $('.div-board-cell').css('background-color', 'rgba(0, 0, 0, 0)')
+  turn = 1
 }

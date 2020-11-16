@@ -14,7 +14,7 @@ block leftContent
           th 방제목
           th 방장
           th 인원수
-          th 시간
+          th.cell-deleted 시간
       tbody
         -for(var i=0; i<rooms.length; i++)
           tr
@@ -22,7 +22,7 @@ block leftContent
             td #{rooms[i].roomName}
             td #{rooms[i].userName}
             td #{rooms[i].userNumRatio}
-            td #{rooms[i].time}
+            td(class='cell-deleted') #{rooms[i].time}
             td(hidden)
 block rightContent
   div#viewer
